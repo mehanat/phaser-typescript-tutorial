@@ -4,47 +4,60 @@ import State from './state';
 
 // The main state of the game
 export default class MainState extends State {
-  sky: Phaser.Sprite; // Reference to background sprite
+  player: Phaser.Sprite;
 
-  platforms: Phaser.Group; // Reference to the group of platform's sprites
+  cursors: Phaser.CursorKeys;
+
+  graphics: Phaser.Graphics;
 
   create(): void {
     // Phaser supports some physical engines (p2, box2d, ninja and arcate).
     // For our game, we don't need a strong physical simulation, so we'll choose
     // `arcade` model.
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
+    this.cursors = this.game.input.keyboard.createCursorKeys();
+    this.game.stage.backgroundColor = '#2d2d2d';
 
 
-    // Add a simple background
-    this.sky = this.game.add.sprite(0, 0, 'sky');
 
 
-    // Also we create a group for platforms
-    this.platforms = this.game.add.group();
+    // The player and its settings
+    this.player = this.game.add.sprite(32, this.game.world.height - 150, 'dude');
+    this.graphics = this.game.add.graphics(0, 0);
+    this.graphics.beginFill(0xFF0000, 1);
+    this.graphics.drawRect(300, 300, 40, 40);
+    this.graphics.drawRect(200, 300, 40, 40);
+    this.graphics.drawRect(300, 200, 40, 40);
+    this.graphics.drawRect(100, 300, 40, 40);
+    this.graphics.drawRect(300, 100, 40, 40);
 
-    // and enable physics for any object that is created in this group
-    this.platforms.enableBody = true;
+    //  We need to enable physics on the player
+    this.game.physics.arcade.enable(this.player);
 
+    //  Player physics properties. Give the little guy a slight bounce.
+    this.player.body.bounce.y = 0.2;
+    this.player.body.collideWorldBounds = true;
 
-    // Create the ground
-    const ground = this.platforms.create(
-      0,
-      this.game.world.height - 64,
-      'platform'
-    );
+  }
 
-    // and scale it to fit the width of the game (the original sprite
-    // size - 400x32, width of the game - 800)
-    ground.scale.setTo(2, 2);
+  update() {
+    this.player.frame = 4;
+    if (this.cursors.left.isDown)
+    {
+        this.player.reset(this.player.x - 5, this.player.y);
+    }
+    else if (this.cursors.right.isDown)
+    {
+        this.player.reset(this.player.x + 5, this.player.y);
+    }
+    else if (this.cursors.up.isDown)
+    {
+        this.player.reset(this.player.x, this.player.y - 5);
+    }
+    else if (this.cursors.down.isDown)
+    {
+        this.player.reset(this.player.x, this.player.y + 5);
+    }
 
-    // And make it immovable (Otherwise it will fall when we jump on it).
-    ground.body.immovable = true;
-
-    // Also add two ledges
-    const ledge1 = this.platforms.create(400, 400, 'platform');
-    ledge1.body.immovable = true;
-
-    const ledge2 = this.platforms.create(-150, 250, 'platform');
-    ledge2.body.immovable = true;
   }
 }

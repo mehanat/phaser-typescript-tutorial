@@ -10,7 +10,6 @@
     "test": "echo 'noop'",
     "prepublish": "npm run lint && npm run build && npm run test",
     "prepush": "npm run prepublish",
-    "precommit": "npm run lint"
   },
   "author": {
     "name": "SuperPaintman",
