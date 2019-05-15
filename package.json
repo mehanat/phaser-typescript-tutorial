@@ -9,7 +9,6 @@
     "lint": "tslint src/**/*.ts",
     "test": "echo 'noop'",
     "prepublish": "npm run lint && npm run build && npm run test",
-    "prepush": "npm run prepublish"
   },
   "author": {
     "name": "SuperPaintman",
